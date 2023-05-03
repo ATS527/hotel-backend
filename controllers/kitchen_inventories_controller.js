@@ -2,28 +2,11 @@ const Kitchen_Inventories = require("../models/kitchen_inventories_model");
 
 exports.createKitchenInventory = async (req, res) => {
   try {
-    const {
-      food_name,
-      monthly_need,
-      double,
-      current_quantity,
-      rate,
-      unit,
-      total,
-    } = req.body;
-    const kitchenInventory = await Kitchen_Inventories.create({
-      food_name,
-      monthly_need,
-      double,
-      current_quantity,
-      rate,
-      unit,
-      total,
-    });
+    const kitchenInventory = await Kitchen_Inventories.create(req.body);
     res.status(201).json({ success: true, data: kitchenInventory });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, error: "Server Error" });
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
@@ -56,30 +39,13 @@ exports.getKitchenInventoryById = async (req, res) => {
 exports.updateKitchenInventory = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      food_name,
-      monthly_need,
-      double,
-      current_quantity,
-      rate,
-      unit,
-      total,
-    } = req.body;
     const kitchenInventory = await Kitchen_Inventories.findByPk(id);
     if (!kitchenInventory) {
       return res
         .status(404)
         .json({ success: false, error: "Kitchen inventory not found" });
     }
-    await kitchenInventory.update({
-      food_name,
-      monthly_need,
-      double,
-      current_quantity,
-      rate,
-      unit,
-      total,
-    });
+    await kitchenInventory.update(req.body);
     res.status(200).json({ success: true, data: kitchenInventory });
   } catch (error) {
     console.log(error);

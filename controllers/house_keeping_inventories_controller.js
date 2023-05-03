@@ -29,7 +29,7 @@ exports.getInventoryByItemName = async (req, res) => {
 };
 
 
-exports.addInventory = async (req, res) => {
+exports.createInventory = async (req, res) => {
   const { item_name, yearly_need, quantity, rate, total, current_quantity } =
     req.body;
 
@@ -57,8 +57,7 @@ exports.addInventory = async (req, res) => {
 
 exports.updateInventory = async (req, res) => {
   const itemName = req.params.itemName;
-  const { yearly_need, quantity, rate, total, current_quantity } = req.body;
-
+  
   try {
     const inventory = await House_Keeping_Inventories.findByPk(itemName);
     if (!inventory) {

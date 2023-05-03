@@ -4,22 +4,7 @@ const Invoices_Issues_Records = require("../models/invoices_issue_record_model")
 
 exports.createInvoice = async (req, res) => {
   try {
-    const {
-      invoice_no,
-      customer_name,
-      issue_date,
-      t_amount,
-      c_amount,
-      d_amount,
-    } = req.body;
-    const invoiceIssueRecord = await Invoices_Issues_Records.create({
-      invoice_no,
-      customer_name,
-      issue_date,
-      t_amount,
-      c_amount,
-      d_amount,
-    });
+    const invoiceIssueRecord = await Invoices_Issues_Records.create(req.body);
     res.status(201).json({ success: true, data: invoiceIssueRecord });
   } catch (error) {
     console.error(error);
@@ -30,13 +15,11 @@ exports.createInvoice = async (req, res) => {
 
 exports.findAllInvoice = async (req, res) => {
   try {
-    const { customer_name } = req.query;
-    const condition = customer_name
-      ? { customer_name: { [Op.iLike]: `%${customer_name}%` } }
-      : null;
-    const invoiceIssueRecords = await Invoices_Issues_Records.findAll({
-      where: condition,
-    });
+    // const { customer_name } = req.query;
+    // const condition = customer_name
+    //   ? { customer_name: { [Op.iLike]: `%${customer_name}%` } }
+    //   : null;
+    const invoiceIssueRecords = await Invoices_Issues_Records.findAll();
     res.status(200).json({ success: true, data: invoiceIssueRecords });
   } catch (error) {
     console.error(error);
@@ -68,11 +51,11 @@ exports.findOneInvoice = async (req, res) => {
 exports.updateInvoice = async (req, res) => {
   try {
     const { invoice_no } = req.params;
-    const { customer_name, issue_date, t_amount, c_amount, d_amount } =
+    const { customer_name, issue_date, total_amount, credit_amount, debit_amount } =
       req.body;
     const [rowsUpdated, [updatedInvoiceIssueRecord]] =
       await Invoices_Issues_Records.update(
-        { customer_name, issue_date, t_amount, c_amount, d_amount },
+        { customer_name, issue_date, total_amount, credit_amount, debit_amount },
         { returning: true, where: { invoice_no } }
       );
     if (rowsUpdated === 1) {
