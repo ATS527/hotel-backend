@@ -19,10 +19,6 @@ const Activity_Log = db.define("Activity_Log", {
     type: Sequelize.TEXT,
     allowNull: false,
   },
-  updated_at: {
-    type: Sequelize.DATE,
-    allowNull: false,
-  },
 });
 
 Activity_Log.belongsTo(Managers, { foreignKey: "manager_id" });

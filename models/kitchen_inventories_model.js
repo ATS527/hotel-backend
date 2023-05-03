@@ -30,10 +30,6 @@ const Kitchen_Inventories = db.define("Kitchen_Inventories", {
     type: Sequelize.FLOAT,
     allowNull: false,
   },
-  updated_at: {
-    type: Sequelize.DATE,
-    allowNull: false,
-  },
 });
 
 module.exports = Kitchen_Inventories;

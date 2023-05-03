@@ -14,7 +14,7 @@ const Invoices_Issues_Records = db.define("Invoices_Issues_Records", {
     type: Sequelize.DATEONLY,
     allowNull: false,
   },
-  amount: {
+  total_amount: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },

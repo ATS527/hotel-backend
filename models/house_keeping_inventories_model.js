@@ -26,10 +26,6 @@ const House_Keeping_Inventories = db.define("House_Keeping_Inventories", {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  updated_at: {
-    type: Sequelize.DATE,
-    allowNull: false,
-  },
 });
 
 module.exports = House_Keeping_Inventories;

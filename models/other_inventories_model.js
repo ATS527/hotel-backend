@@ -22,10 +22,6 @@ const Other_Inventories = db.define("Other_Inventories", {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  updated_at: {
-    type: Sequelize.DATE,
-    allowNull: false,
-  },
 });
 
 module.exports = Other_Inventories;
