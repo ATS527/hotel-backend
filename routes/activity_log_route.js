@@ -6,22 +6,18 @@ const {
   updateActivityLog,
   deleteActivityLog,
 } = require("../controllers/activity_log_controller");
-const router = express.Router();
-const Activity_Log = require("../models/activity_log_model");
+const activityLogRouter = express.Router();
 
+const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
-router.get("/", getAllActivityLog);
+activityLogRouter.get("/getAllActivityLog", isAuthenticatedUser, authorizeRoles("admin"), getAllActivityLog);
 
+activityLogRouter.get("/getActivityLogById/:id", isAuthenticatedUser, authorizeRoles("admin"), getActivityLogById);
 
-router.get("/:id", getActivityLogById);
+activityLogRouter.post("/createActivityLog",isAuthenticatedUser, createActivityLog);
 
+activityLogRouter.put("/updateActivityLog/:log_id",isAuthenticatedUser,authorizeRoles("admin"), updateActivityLog);
 
-router.post("/", createActivityLog);
+activityLogRouter.delete("/deleteActivityLog/:log_id",isAuthenticatedUser, authorizeRoles("admin"), deleteActivityLog);
 
-
-router.put("/:id", updateActivityLog);
-
-
-router.delete("/:id", deleteActivityLog);
-
-module.exports = router;
+module.exports = activityLogRouter;

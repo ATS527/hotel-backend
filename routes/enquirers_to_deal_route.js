@@ -1,20 +1,26 @@
 const express = require("express");
-const router = express.Router();
-const enquirersController = require("../controllers/enquirersController");
+const enquirerRouter = express.Router();
 
+const {
+    getAllEnquirers,
+    getEnquirer,
+    createEnquirer,
+    updateEnquirer,
+    deleteEnquirer,
+} = require("../controllers/enquirers_controller");
 
-router.get("/", enquirersController.getAllEnquirers);
+const {
+    isAuthenticatedUser,
+ } = require("../middleware/auth");
 
+ enquirerRouter.get("/getAllEnquirers", isAuthenticatedUser,getAllEnquirers);
 
-router.get("/:name", enquirersController.getEnquirer);
+ enquirerRouter.get("/getEnquirer/:name", isAuthenticatedUser,getEnquirer);
 
+ enquirerRouter.post("/createEnquirer", isAuthenticatedUser,createEnquirer);
 
-router.post("/", enquirersController.createEnquirer);
+ enquirerRouter.put("/updateEnquirer/:name", isAuthenticatedUser,updateEnquirer);
 
+ enquirerRouter.delete("/deleteEnquirer/:name",isAuthenticatedUser, deleteEnquirer);
 
-router.put("/:name", enquirersController.updateEnquirer);
-
-
-router.delete("/:name", enquirersController.deleteEnquirer);
-
-module.exports = router;
+module.exports = enquirerRouter;

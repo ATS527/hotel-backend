@@ -53,18 +53,21 @@ exports.updateInvoice = async (req, res) => {
     const { invoice_no } = req.params;
     const { customer_name, issue_date, total_amount, credit_amount, debit_amount } =
       req.body;
-    const [rowsUpdated, [updatedInvoiceIssueRecord]] =
-      await Invoices_Issues_Records.update(
-        { customer_name, issue_date, total_amount, credit_amount, debit_amount },
-        { returning: true, where: { invoice_no } }
-      );
-    if (rowsUpdated === 1) {
-      res.status(200).json({ success: true, data: updatedInvoiceIssueRecord });
-    } else {
-      res
-        .status(404)
-        .json({ success: false, message: "Invoice issue record not found" });
+
+    const invoiceRecord = await Invoices_Issues_Records.findByPk(invoice_no);
+
+    if (!invoiceRecord) {
+      return res.status(404).json({ success: false, message: "Invoice issue record not found" });
     }
+
+    const updatedInvoiceIssueRecord = await Invoices_Issues_Records.update(
+      { customer_name, issue_date, total_amount, credit_amount, debit_amount },
+      { returning: true, where: { invoice_no } }
+    );
+
+    const newInvoiceRecord = await Invoices_Issues_Records.findByPk(invoice_no);
+
+    res.status(200).json({ success: true, data: newInvoiceRecord });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });

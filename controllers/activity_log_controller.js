@@ -36,7 +36,8 @@ exports.createActivityLog = async (req, res) => {
 
 exports.updateActivityLog = async (req, res) => {
   try {
-    const log = await Activity_Log.findByPk(req.params.id);
+    console.log("working");
+    const log = await Activity_Log.findByPk(req.params.log_id);
     if (!log) {
       res.status(404).json({ success: false, message: "Log not found" });
     } else {
@@ -51,7 +52,7 @@ exports.updateActivityLog = async (req, res) => {
 
 exports.deleteActivityLog = async (req, res) => {
   try {
-    const log = await Activity_Log.findByPk(req.params.id);
+    const log = await Activity_Log.findByPk(req.params.log_id);
     if (!log) {
       res.status(404).json({ success: false, message: "Log not found" });
     } else {

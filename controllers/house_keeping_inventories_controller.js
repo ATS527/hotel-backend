@@ -63,14 +63,7 @@ exports.updateInventory = async (req, res) => {
     if (!inventory) {
       res.status(404).json({ success: false, message: "Inventory not found" });
     } else {
-      await inventory.update({
-        yearly_need,
-        quantity,
-        rate,
-        total,
-        current_quantity,
-        updated_at: new Date(),
-      });
+      await inventory.update(req.body);
       res.json({ success: true, message: "Inventory updated successfully" });
     }
   } catch (err) {

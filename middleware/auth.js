@@ -7,7 +7,10 @@ exports.isAuthenticatedUser = async (req, res, next) => {
   const { token } = req.cookies;
 
   if (!token) {
-    return next(new ErrorHandler("Please Login for access this resource", 401));
+    return res.status(500).json({
+      success: false,
+      message: "Login first to access this resource",
+    });
   }
 
   const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -21,8 +24,12 @@ exports.isAuthenticatedUser = async (req, res, next) => {
 exports.authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return next(new ErrorHandler(`${req.user.role} can not access this resources`));
-    };
+      return res.status(500).json({
+        success: false,
+        message: `${req.user.role} can not access this resources`
+      }
+      );
+    }
     next();
   }
 }

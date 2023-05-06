@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
 const db = require("../config/db");
-const Managers = require("./user_model");
 
 const Activity_Log = db.define("Activity_Log", {
   log_id: {
@@ -10,10 +9,6 @@ const Activity_Log = db.define("Activity_Log", {
   manager_id: {
     type: Sequelize.STRING,
     allowNull: false,
-    references: {
-      model: Managers,
-      key: "manager_id",
-    },
   },
   log: {
     type: Sequelize.TEXT,
@@ -21,6 +16,5 @@ const Activity_Log = db.define("Activity_Log", {
   },
 });
 
-Activity_Log.belongsTo(Managers, { foreignKey: "manager_id" });
 
 module.exports = Activity_Log;

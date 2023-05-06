@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const invoicesIssueRecordRouter = express.Router();
 const {
   findAllInvoice,
   findOneInvoice,
@@ -8,19 +8,21 @@ const {
   deleteInvoice,
 } = require("../controllers/invoices_issue_record_controller");
 
-
-router.get("/", findAllInvoice);
-
-
-router.get("/:invoice_no", findOneInvoice);
+const { isAuthenticatedUser } = require("../middleware/auth");
 
 
-router.post("/", createInvoice);
+invoicesIssueRecordRouter.get("/findAllInvoice", findAllInvoice);
 
 
-router.put("/:invoice_no", updateInvoice);
+invoicesIssueRecordRouter.get("/findOneInvoice/:invoice_no", findOneInvoice);
 
 
-router.delete("/:invoice_no", deleteInvoice);
+invoicesIssueRecordRouter.post("/createInvoice", createInvoice);
 
-module.exports = router;
+
+invoicesIssueRecordRouter.put("/updateInvoice/:invoice_no", updateInvoice);
+
+
+invoicesIssueRecordRouter.delete("/deleteInvoice/:invoice_no", deleteInvoice);
+
+module.exports = invoicesIssueRecordRouter;

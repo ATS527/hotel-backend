@@ -63,7 +63,7 @@ exports.deleteKitchenInventory = async (req, res) => {
         .json({ success: false, error: "Kitchen inventory not found" });
     }
     await kitchenInventory.destroy();
-    res.status(200).json({ success: true, data: {} });
+    res.status(200).json({ success: true, data: "Kitchen inventory is deleted" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, error: "Server Error" });

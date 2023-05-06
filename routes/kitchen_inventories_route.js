@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const kitchenInventoriesRouter = express.Router();
 const {
   getKitchenInventories,
   getKitchenInventoryById,
@@ -7,20 +7,21 @@ const {
   updateKitchenInventory,
   deleteKitchenInventory,
 } = require("../controllers/kitchen_inventories_controller");
+const { isAuthenticatedUser } = require("../middleware/auth");
 
 
-router.get("/", getKitchenInventories);
+kitchenInventoriesRouter.get("/getKitchenInventories", getKitchenInventories);
 
 
-router.get("/:foodName", getKitchenInventoryById);
+kitchenInventoriesRouter.get("/getKitchenInventoryById/:id", getKitchenInventoryById);
 
 
-router.post("/", createKitchenInventory);
+kitchenInventoriesRouter.post("/createKitchenInventory",isAuthenticatedUser, createKitchenInventory);
 
 
-router.put("/:foodName", updateKitchenInventory);
+kitchenInventoriesRouter.put("/updateKitchenInventory/:id",isAuthenticatedUser, updateKitchenInventory);
 
 
-router.delete("/:foodName", deleteKitchenInventory);
+kitchenInventoriesRouter.delete("/deleteKitchenInventory/:id",isAuthenticatedUser ,deleteKitchenInventory);
 
-module.exports = router;
+module.exports = kitchenInventoriesRouter;

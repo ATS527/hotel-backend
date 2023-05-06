@@ -1,26 +1,30 @@
 const express = require("express");
-const router = express.Router();
+const houseKeepingInventoriesRouter = express.Router();
 const {
   getAllInventories,
   getInventoryByItemName,
-  addInventory,
+  createInventory,
   updateInventory,
   deleteInventory,
 } = require("../controllers/house_keeping_inventories_controller");
 
-
-router.get("/", getAllInventories);
-
-
-router.get("/:itemName", getInventoryByItemName);
+const {
+  isAuthenticatedUser,
+} = require("../middleware/auth");
 
 
-router.post("/", addInventory);
+houseKeepingInventoriesRouter.get("/getAllHouseKeepingInventory", isAuthenticatedUser, getAllInventories);
 
 
-router.put("/:itemName", updateInventory);
+houseKeepingInventoriesRouter.get("/getHouseKeepingInventoryByItemName/:itemName",getInventoryByItemName);
 
 
-router.delete("/:itemName", deleteInventory);
+houseKeepingInventoriesRouter.post("/createHouseKeepingInventory",isAuthenticatedUser, createInventory);
 
-module.exports = router;
+
+houseKeepingInventoriesRouter.put("/updateHouseKeepingInventory/:itemName",isAuthenticatedUser, updateInventory);
+
+
+houseKeepingInventoriesRouter.delete("/deleteHouseKeepingInventory/:itemName",isAuthenticatedUser, deleteInventory);
+
+module.exports = houseKeepingInventoriesRouter;
