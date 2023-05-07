@@ -1,4 +1,5 @@
 const express = require("express");
+const expressFileUpload = require("express-fileupload");
 const bodyParser = require("body-parser");
 const db = require("./config/db");
 const sequelize = require("sequelize");
@@ -20,9 +21,9 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(expressFileUpload());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/v2", managerRouter);
 app.use("/api/v2", activityLogRouter);

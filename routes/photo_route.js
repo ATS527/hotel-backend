@@ -1,22 +1,22 @@
 const photoRouter = require('express').Router();
 
 const {
-    createCoverPhoto,
-    getAllCoverPhotos,
-    getCoverPhotosByRoomId,
-    updateCoverPhoto,
-    deleteCoverPhoto,
+    createPhoto,
+    getAllPhotosByType,
+    getCoverPhotoByIdAndType,
+    updatePhoto,
+    deletePhoto,
 } = require('../controllers/photo_controller');
 const { isAuthenticatedUser } = require('../middleware/auth');
 
-photoRouter.post('/createCoverPhoto', isAuthenticatedUser,createCoverPhoto);
+photoRouter.post('/createPhoto', isAuthenticatedUser,createPhoto);
 
-photoRouter.get('/getAllCoverPhotos', isAuthenticatedUser, getAllCoverPhotos);
+photoRouter.get('/getAllPhotosByType/:type', isAuthenticatedUser, getAllPhotosByType);
 
-photoRouter.get('/getCoverPhotosByRoomId/:room_id', getCoverPhotosByRoomId);
+photoRouter.get('/getCoverPhotoByIdAndType', getCoverPhotoByIdAndType);
 
-photoRouter.put('/updateCoverPhoto/:room_id', isAuthenticatedUser,updateCoverPhoto);
+photoRouter.put('/updatePhoto', isAuthenticatedUser,updatePhoto);
 
-photoRouter.delete('/deleteCoverPhoto/:room_id',isAuthenticatedUser, deleteCoverPhoto);
+photoRouter.delete('/deletePhoto',isAuthenticatedUser, deletePhoto);
 
 module.exports = photoRouter;

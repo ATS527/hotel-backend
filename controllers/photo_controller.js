@@ -1,86 +1,76 @@
-const { SlidePhoto, RoomPhoto, OtherPhoto, CoverPhoto } = require('../models/photo_models.js');
+const {Photos} = require('../models/photo_models.js');
 
 //use multer to accept images from form and store in uploads folder and generate the location of the image in a string
 const fs = require("fs");
-const getShortId = require("get-short-id");
+const { nanoid } = require("nanoid");
 
-const server_url = ""
+const server_url = process.env.SERVER_URL || "http://localhost:3000/uploads/";
 
-exports.createCoverPhoto = async (req, res) => {
+exports.createPhoto = async (req, res) => {
     try {
-        var imageLinks = [];
         if (!req.files) return res.status(400).json({ success: false, message: "No files uploaded" });
+
+        const photo = await Photos.create({
+            id: req.body.id,
+            room_id: req.body.room_id,
+            type: req.body.type,
+        });
 
         const { image1, image2, image3, image4 } = req.files;
 
+
         if (image1 !== undefined) {
-            const filename = getShortId();
+            const filename = nanoid();
             image1.mv(`./public/uploads/${filename}.jpg`, (err) => {
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false, error: err.message });
                 } else {
-                    imageLinks.push({
-                        name: "image1",
-                        public_id: filename,
-                    });
+                    photo.image1 = server_url + filename + '.jpg';
                 }
             });
         }
 
         if (image2 !== undefined) {
-            const filename = getShortId();
+            const filename = nanoid();
             image2.mv(`./public/uploads/${filename}.jpg`, (err) => {
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false, error: err.message });
                 } else {
-                    imageLinks.push({
-                        name: "image2",
-                        public_id: filename,
-                    });
+                    photo.image2 = server_url + filename + '.jpg';
                 }
             });
         }
 
         if (image3 !== undefined) {
-            const filename = getShortId();
+            const filename = nanoid();
             image3.mv(`./public/uploads/${filename}.jpg`, (err) => {
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false, error: err.message });
                 } else {
-                    imageLinks.push({
-                        name: "image3",
-                        public_id: filename,
-                    });
+                    photo.image3 = server_url + filename + '.jpg';
                 }
             });
         }
 
         if (image4 !== undefined) {
-            const filename = getShortId();
+            const filename = nanoid();
             image4.mv(`./public/uploads/${filename}.jpg`, (err) => {
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false, error: err.message });
                 } else {
-                    imageLinks.push({
-                        name: "image4",
-                        public_id: filename,
-                    });
+                    photo.image4 = server_url + filename + '.jpg';
                 }
             });
         }
 
-        const coverPhoto = await CoverPhoto.create({
-            id: req.body.id,
-            room_id: req.body.room_id,
-            image1: server_url + imageLinks[0].public_id,
-            image2: server_url + imageLinks[1].public_id,
-            image3: server_url + imageLinks[2].public_id,
-            image4: server_url + imageLinks[3].public_id,
-        });
+        setTimeout(async () => {
+            await photo.save();
+            res.status(200).json({ success: true, data: photo });
+        }, 5000);
 
     } catch (error) {
         console.log(error);
@@ -88,178 +78,199 @@ exports.createCoverPhoto = async (req, res) => {
     }
 }
 
-exports.getAllCoverPhotos = async (req, res) => {
+exports.getAllPhotosByType = async (req, res) => {
     try {
-        const coverPhotos = await CoverPhoto.findAll();
-        res.status(200).json({ success: true, data: coverPhotos });
+        const photos = await Photos.findAll(
+            {
+                where: {
+                    type: req.params.type
+                }
+            }
+        );
+        res.status(200).json({ success: true, data: photos });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 }
 
-exports.getCoverPhotosByRoomId = async (req, res) => {
+exports.getCoverPhotoByIdAndType = async (req, res) => {
     try {
-        const coverPhoto = await CoverPhoto.findOne({ where: { room_id: req.params.room_id } });
-        res.status(200).json({ success: true, data: coverPhoto });
+        const photo = await Photos.findOne({ where: { room_id: req.query.room_id,type: req.query.type } });
+        res.status(200).json({ success: true, data: photo });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 }
 
-exports.updateCoverPhoto = async (req, res) => {
-    //take the multiple uploaded files and put into database
-    var imageData1,imageData2,imageData3,imageData4;
-
+exports.updatePhoto = async (req, res) => {
     try {
 
-        const coverPhoto = await CoverPhoto.findOne({
-            where: { room_id: req.params.room_id },
+        const photo = await Photos.findOne({
+            where: { room_id: req.body.room_id , type: req.body.type },
         });
 
-        if (coverPhoto === null) {
-            return res.status(404).json({ success: false, message: "Cover photo not found" });
+        if (photo === null) {
+            return res.status(404).json({ success: false, message: "Photo not found" });
         }
 
-        if (req.body.image1 === "true") {
+        if (req.files.image1 !== undefined) {
             const { image1 } = req.files;
 
-            const filename = getId();
-            await image1.mv(`./public/uploads/${filename}`, async function (err) {
+            const filename = nanoid();
+            await image1.mv(`./public/uploads/${filename}.jpg`, async function (err) {
 
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false, error: err.message });
                 }
 
-                fs.unlink(`./public/uploads/${coverPhoto.image1}`, (err) => {
-                    if (err) {
-                        console.log(err);
-                        return res.status(500).json({ success: false, error: err.message });
-                    }
-                    coverPhoto.image1 = null;
-                });
-            });
+                if (photo.image1 !== null) {
+                    const strippedFilename = photo.image1.replace(server_url, "");
 
-            imageData1 = server_url + filename;
+                    fs.unlink(`./public/uploads/${strippedFilename}`, (err) => {
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).json({ success: false, error: err.message });
+                        }
+                        photo.image1 = server_url + filename + '.jpg';
+                    });
+                } else {
+                    photo.image1 = server_url + filename + '.jpg';
+                }
+            });
         }
 
-        if (req.body.image2 === "true") {
-            const filename = getId();
-            await image2.mv(`./public/uploads/${filename}`, async function (err) {
+        if (req.files.image2 !== undefined) {
+            const { image2 } = req.files;
+            console.log("called here");
+            const filename = nanoid();
+            await image2.mv(`./public/uploads/${filename}.jpg`, async function (err) {
 
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false, error: err.message });
                 }
 
-                fs.unlink(`./public/uploads/${coverPhoto.image2}`, (err) => {
-                    if (err) {
-                        console.log(err);
-                        return res.status(500).json({ success: false, error: err.message });
-                    }
-                    coverPhoto.image2 = null;
-                });
-            });
+                if (photo.image2 !== null) {
+                    const strippedFilename = photo.image2.replace(server_url, "");
 
-            imageData2 = server_url + filename;
+                    fs.unlink(`./public/uploads/${strippedFilename}`, (err) => {
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).json({ success: false, error: err.message });
+                        }
+                        photo.image2 = server_url + filename + '.jpg';
+                    });
+                } else {
+                    photo.image2 = server_url + filename + '.jpg';
+                }
+            });
         }
 
-        if (req.body.image3 === "true") {
-            const filename = getId();
-            await image3.mv(`./public/uploads/${filename}`, async function (err) {
+        if (req.files.image3 !== undefined) {
+            const { image3 } = req.files;
+            const filename = nanoid();
+            await image3.mv(`./public/uploads/${filename}.jpg`, async function (err) {
 
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false, error: err.message });
                 }
 
-                fs.unlink(`./public/uploads/${coverPhoto.image3}`, (err) => {
-                    if (err) {
-                        console.log(err);
-                        return res.status(500).json({ success: false, error: err.message });
-                    }
-                    coverPhoto.image3 = null;
-                });
-            });
+                if (photo.image3 !== null) {
+                    const strippedFilename = photo.image3.replace(server_url, "");
 
-            imageData3 = server_url + filename;
+                    fs.unlink(`./public/uploads/${strippedFilename}`, (err) => {
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).json({ success: false, error: err.message });
+                        }
+                        photo.image3 = server_url + filename + '.jpg';
+                    });
+                } else {
+                    photo.image3 = server_url + filename + '.jpg';
+                }
+            });
         }
 
-        if (req.body.image4 === "true") {
-            const filename = getId();
-            await image4.mv(`./public/uploads/${filename}`, async function (err) {
+        if (req.files.image4 !== undefined) {
+            const { image4 } = req.files;
+            const filename = nanoid();
+            await image4.mv(`./public/uploads/${filename}.jpg`, async function (err) {
 
                 if (err) {
                     console.log(err);
                     return res.status(500).json({ success: false, error: err.message });
                 }
 
-                fs.unlink(`./public/uploads/${coverPhoto.image4}`, (err) => {
-                    if (err) {
-                        console.log(err);
-                        return res.status(500).json({ success: false, error: err.message });
-                    }
-                    coverPhoto.image4 = null;
-                });
-            });
+                if (photo.image4 !== null) {
+                    const strippedFilename = photo.image4.replace(server_url, "");
 
-            imageData4 = server_url + filename;
+                    fs.unlink(`./public/uploads/${strippedFilename}`, (err) => {
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).json({ success: false, error: err.message });
+                        }
+                        photo.image4 = server_url + filename + '.jpg';
+                    });
+                } else {
+                    photo.image4 = server_url + filename + '.jpg';
+                }
+            });
         }
 
-        await coverPhoto.save();
-
-        res.status(200).json({ success: true, data: coverPhoto });
+        setTimeout(async () => {
+            await photo.save();
+            res.status(200).json({ success: true, data: photo });
+        }, 5000);
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 }
 
-exports.deleteCoverPhoto = async (req, res) => {
+async function deleteCoverPhotoImages(imageLocation) {
+    fs.unlink(`./public/uploads/${imageLocation}`, (err) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ success: false, error: err.message });
+        }
+        console.log("Image deleted");
+    });
+}
+
+exports.deletePhoto = async (req, res) => {
     try {
-        const coverPhoto = await CoverPhoto.findOne({
-            where: { room_id: req.params.room_id },
+        const photo = await Photos.findOne({
+            where: { room_id: req.query.room_id , type: req.query.type},
         });
 
-        if (coverPhoto === null) {
+        if (photo === null) {
             return res.status(404).json({ success: false, message: "Cover photo not found" });
         }
 
-        const image1Location = coverPhoto.image1.replace(server_url, "");
-        fs.unlink(`./public/uploads/${image1Location}`, (err) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).json({ success: false, error: err.message });
-            }
-        });
+        if (photo.image1 !== null) {
+            await deleteCoverPhotoImages(photo.image1.replace(server_url, ""));
+        }
 
-        const image2Location = coverPhoto.image2.replace(server_url, "");
-        fs.unlink(`./public/uploads/${image2Location}`, (err) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).json({ success: false, error: err.message });
-            }
-        });
+        if (photo.image2 !== null) {
+            await deleteCoverPhotoImages(photo.image2.replace(server_url, ""));
+        }
 
-        const image3Location = coverPhoto.image3.replace(server_url, "");
-        fs.unlink(`./public/uploads/${image3Location}`, (err) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).json({ success: false, error: err.message });
-            }
-        });
+        if (photo.image3 !== null) {
+            await deleteCoverPhotoImages(photo.image3.replace(server_url, ""));
+        }
 
-        const image4Location = coverPhoto.image4.replace(server_url, "");
-        fs.unlink(`./public/uploads/${image4Location}`, (err) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).json({ success: false, error: err.message });
-            }
-        });
+        if (photo.image4 !== null) {
+            await deleteCoverPhotoImages(photo.image4.replace(server_url, ""));
+        }
 
-        await coverPhoto.destroy();
+        setTimeout(async () => {
+            await photo.destroy();
+            res.status(200).json({ success: true, message: "Cover photo deleted" });
+        }, 3000);
 
-        res.status(200).json({ success: true, message: "Cover photo deleted" });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ success: false, error: error.message });
     }
 }
