@@ -16,6 +16,7 @@ const otherInventoryRouter = require("./routes/other_inventories_route");
 const photoRouter = require("./routes/photo_route");
 const adminRouter = require("./routes/admin_route");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const app = express();
 
@@ -24,6 +25,9 @@ app.use(cookieParser());
 app.use(expressFileUpload());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors({
+  origin: ["http://127.0.0.1:3000", "http://localhost:3000", "https://server.ashahotel.in", "https://ashahotel.in"],
+}));
 
 app.use("/api/v2", managerRouter);
 app.use("/api/v2", activityLogRouter);
