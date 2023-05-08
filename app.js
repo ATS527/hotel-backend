@@ -27,6 +27,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors({
   origin: ["http://127.0.0.1:3000", "http://localhost:3000", "https://server.ashahotel.in", "https://ashahotel.in"],
+  credentials: true
 }));
 
 app.use("/api/v2", managerRouter);
