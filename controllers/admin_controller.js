@@ -6,12 +6,12 @@ exports.createAdmin = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const data = {
-        id: req.body.id,
-        name: req.body.name,
-        email: req.body.email,
-        password: hashedPassword,
-        phone_number: req.body.phone_number,
-        role: 'admin',
+            id: req.body.id,
+            name: req.body.name,
+            email: req.body.email,
+            password: hashedPassword,
+            phone_number: req.body.phone_number,
+            role: 'admin',
         };
         const adminData = await admin.create(data);
         res.status(201).json({ success: true, data: adminData });
@@ -69,7 +69,10 @@ exports.logoutAdmin = async (req, res) => {
     try {
         res.cookie('token', null, {
             expires: new Date(Date.now()),
-            httpOnly: true,
+            httpOnly: false,
+            withCredentials: true,
+            sameSite: 'none',
+            secure: true,
         });
         res.status(200).json({ success: true, message: 'Logged out successfully' });
     } catch (err) {
