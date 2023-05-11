@@ -17,6 +17,7 @@ const photoRouter = require("./routes/photo_route");
 const adminRouter = require("./routes/admin_route");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const roomRouter = require("./routes/room_route");
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use("/api/v2", otherInventoryRouter);
 app.use("/api/v2", managerRouter);
 app.use("/api/v2", photoRouter);
 app.use("/api/v2", adminRouter);
+app.use("/api/v2", roomRouter);
 
 //express serve public folder as static
 app.use(express.static(path.join(__dirname, "public")));
