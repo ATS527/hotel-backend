@@ -1,4 +1,6 @@
 const { Inventories } = require("../models/inventories_model");
+const Activity_Log = require("../models/activity_log_model");
+const {nanoid} = require("nanoid");
 
 exports.getAllInventories = async (req, res) => {
   try {
@@ -35,6 +37,13 @@ exports.createInventory = async (req, res) => {
         .json({ success: false, error: "Inventory item already exists" });
     }
     const newInventory = await Inventories.create(req.body);
+
+    const activityLog = await Activity_Log.create({
+      log_id: nanoid(),
+      manager_id: req.user.id,
+      log: `Inventory create with data ${JSON.stringify(req.body)}`
+    });
+
     res.status(201).json({ success: true, data: newInventory });
   } catch (err) {
     console.error(err.message);
@@ -51,7 +60,14 @@ exports.updateInventory = async (req, res) => {
         .status(404)
         .json({ success: false, error: "Inventory item not found" });
     }
-    await inventory.update(req.body);
+    const updatedInventory = await inventory.update(req.body);
+
+    const activityLog = await Activity_Log.create({
+      log_id: nanoid(),
+      manager_id: req.user.id,
+      log: `Inventory ${inventory_id} updated with data ${JSON.stringify(req.body)}`
+    });
+    
     res.status(200).json({ success: true, data: inventory });
   } catch (err) {
     console.error(err.message);
@@ -69,6 +85,13 @@ exports.deleteInventory = async (req, res) => {
         .json({ success: false, error: "Inventory item not found" });
     }
     await inventory.destroy();
+
+    const activityLog = await Activity_Log.create({
+      log_id: nanoid(),
+      manager_id: req.user.id,
+      log: `Inventory ${inventory_id} deleted`
+    });
+
     res.status(200).json({ success: true, data: {} });
   } catch (err) {
     console.error(err.message);

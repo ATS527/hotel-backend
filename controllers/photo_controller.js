@@ -1,4 +1,5 @@
-const {Photos} = require('../models/photo_models.js');
+const { Photos } = require('../models/photo_models.js');
+const Activity_Log = require("../models/activity_log_model");
 
 //use multer to accept images from form and store in uploads folder and generate the location of the image in a string
 const fs = require("fs");
@@ -67,6 +68,12 @@ exports.createPhoto = async (req, res) => {
             });
         }
 
+        const activityLog = await Activity_Log.create({
+            log_id: nanoid(),
+            manager_id: req.user.id,
+            log: `Photo created with data ${JSON.stringify(req.body)}`
+        });
+
         setTimeout(async () => {
             await photo.save();
             res.status(200).json({ success: true, data: photo });
@@ -95,7 +102,7 @@ exports.getAllPhotosByType = async (req, res) => {
 
 exports.getCoverPhotoByIdAndType = async (req, res) => {
     try {
-        const photo = await Photos.findOne({ where: { room_id: req.query.room_id,type: req.query.type } });
+        const photo = await Photos.findOne({ where: { room_id: req.query.room_id, type: req.query.type } });
         res.status(200).json({ success: true, data: photo });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
@@ -106,7 +113,7 @@ exports.updatePhoto = async (req, res) => {
     try {
 
         const photo = await Photos.findOne({
-            where: { room_id: req.body.room_id , type: req.body.type },
+            where: { room_id: req.body.room_id, type: req.body.type },
         });
 
         if (photo === null) {
@@ -219,6 +226,12 @@ exports.updatePhoto = async (req, res) => {
             });
         }
 
+        const activityLog = await Activity_Log.create({
+            log_id: nanoid(),
+            manager_id: req.user.id,
+            log: `Room with room id: ${req.body.room_id} updated ${req.body.type} photos`
+        });
+
         setTimeout(async () => {
             await photo.save();
             res.status(200).json({ success: true, data: photo });
@@ -241,7 +254,7 @@ async function deleteCoverPhotoImages(imageLocation) {
 exports.deletePhoto = async (req, res) => {
     try {
         const photo = await Photos.findOne({
-            where: { room_id: req.query.room_id , type: req.query.type},
+            where: { room_id: req.query.room_id, type: req.query.type },
         });
 
         if (photo === null) {
@@ -263,6 +276,12 @@ exports.deletePhoto = async (req, res) => {
         if (photo.image4 !== null) {
             await deleteCoverPhotoImages(photo.image4.replace(server_url, ""));
         }
+
+        const activityLog = await Activity_Log.create({
+            log_id: nanoid(),
+            manager_id: req.user.id,
+            log: `Photo ${req.query.room_id} deleted`
+        });
 
         setTimeout(async () => {
             await photo.destroy();

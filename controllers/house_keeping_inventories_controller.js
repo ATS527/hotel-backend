@@ -1,5 +1,6 @@
 const House_Keeping_Inventories = require("../models/house_keeping_inventories_model");
-
+const Activity_Log = require("../models/activity_log_model");
+const {nanoid} = require("nanoid");
 
 exports.getAllInventories = async (req, res) => {
   try {
@@ -43,6 +44,13 @@ exports.createInventory = async (req, res) => {
       current_quantity,
       updated_at: new Date(),
     });
+
+    const activityLog = await Activity_Log.create({
+      log_id: nanoid(),
+      manager_id: req.user.id,
+      log: `House Keeping Inventory created with data ${JSON.stringify(req.body)}`
+    });
+
     res.json({
       success: true,
       message: "Inventory added successfully",
@@ -63,7 +71,12 @@ exports.updateInventory = async (req, res) => {
     if (!inventory) {
       res.status(404).json({ success: false, message: "Inventory not found" });
     } else {
-      await inventory.update(req.body);
+      const updatedInventory = await inventory.update(req.body);
+      const activityLog = await Activity_Log.create({
+        log_id: nanoid(),
+        manager_id: req.user.id,
+        log: `House Keeping Inventory ${itemName} updated with data ${JSON.stringify(req.body)}`
+      });
       res.json({ success: true, message: "Inventory updated successfully" });
     }
   } catch (err) {
@@ -82,6 +95,12 @@ exports.deleteInventory = async (req, res) => {
       res.status(404).json({ success: false, message: "Inventory not found" });
     } else {
       await inventory.destroy();
+      const activityLog = await Activity_Log.create({
+        log_id: nanoid(),
+        manager_id: req.user.id,
+        log: `House Keeping Inventory ${itemName} deleted`
+      });
+
       res.json({ success: true, message: "Inventory deleted successfully" });
     }
   } catch (err) {

@@ -55,7 +55,20 @@ exports.updateManager = async (req, res) => {
         if (!manager) {
             res.status(404).json({ success: false, message: "Manager not found" });
         } else {
-            await manager.update(req.body);
+
+            const name = req.body.name;
+            const email = req.body.email;
+            const password = req.body.password;
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const phone_number = req.body.phone_number;
+
+            await manager.update({
+                name: name,
+                email: email,
+                password: hashedPassword,
+                phone_number: phone_number
+            });
+
             res.json({ success: true, data: manager });
         }
     } catch (err) {
