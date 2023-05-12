@@ -8,8 +8,6 @@ const {
   deleteInvoice,
 } = require("../controllers/invoices_issue_record_controller");
 
-const { isAuthenticatedUser } = require("../middleware/auth");
-
 
 invoicesIssueRecordRouter.get("/findAllInvoice", findAllInvoice);
 
