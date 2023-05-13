@@ -2,7 +2,6 @@ const express = require("express");
 const expressFileUpload = require("express-fileupload");
 const bodyParser = require("body-parser");
 const db = require("./config/db");
-const sequelize = require("sequelize");
 require("dotenv").config();
 const path = require("path");
 const managerRouter = require("./routes/manager_route");
@@ -25,8 +24,8 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(expressFileUpload());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors({
   origin: ["http://127.0.0.1:3000", "http://localhost:3000", "https://server.ashahotel.in", "https://ashahotel.in"],
   credentials: true,
