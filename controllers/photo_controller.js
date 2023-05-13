@@ -241,6 +241,20 @@ exports.updatePhoto = async (req, res) => {
     }
 }
 
+exports.getAllPhotosByRoomId = async (req, res) => {
+    try {
+        const photos = await Photos.findAll({ where: { room_id: req.params.id } });
+
+        if (photos === null) {
+            return res.status(404).json({ success: false, message: "Photos not found" });
+        }
+
+        res.status(200).json({ success: true, data: photos });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 async function deleteCoverPhotoImages(imageLocation) {
     fs.unlink(`./public/uploads/${imageLocation}`, (err) => {
         if (err) {
