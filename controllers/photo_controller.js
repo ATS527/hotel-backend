@@ -1,4 +1,4 @@
-const { Photos } = require('../models/photo_models.js');
+const Photos = require('../models/photo_models.js');
 const Activity_Log = require("../models/activity_log_model");
 
 //use multer to accept images from form and store in uploads folder and generate the location of the image in a string
