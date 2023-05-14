@@ -10,16 +10,7 @@ const Rooms = db.define("Rooms", {
   category: {
     type: Sequelize.STRING,
   },
-  price1: {
-    type: Sequelize.FLOAT,
-  },
-  price2: {
-    type: Sequelize.FLOAT,
-  },
-  price3: {
-    type: Sequelize.FLOAT,
-  },
-  price4: {
+  price: {
     type: Sequelize.FLOAT,
   },
   description: {
