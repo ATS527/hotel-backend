@@ -96,4 +96,4 @@ const Photos = db.define("Photos", {
 //   },
 // });
 
-module.exports = { Photos };
+module.exports = Photos;
