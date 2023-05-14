@@ -33,12 +33,6 @@ exports.createEnquirer = async (req, res) => {
   try {
     const enquirer = await Enquirers_To_Deal.create(req.body);
 
-    const activityLog = await ActivityLog.create({
-      log_id: nanoid(),
-      manager_id: req.user.id,
-      log: `Enquirer created with data ${JSON.stringify(req.body)}`
-    });
-
     res.status(201).json({ success: true, data: enquirer });
   } catch (err) {
     console.error(err);
