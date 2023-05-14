@@ -1,7 +1,7 @@
 const Rooms = require("../models/room_model");
 const Activity_Log = require("../models/activity_log_model");
 const { nanoid } = require("nanoid");
-const Photos = require("../models/photo_models");
+const Photos = require("../models/room_photo_model");
 
 exports.createRoom = async (req, res) => {
     try {
