@@ -2,17 +2,33 @@ const Sequelize = require("sequelize");
 const db = require("../config/db");
 
 const Enquirers_To_Deal = db.define("Enquirers_To_Deal", {
-  name: {
+  id: {
     type: Sequelize.STRING,
     primaryKey: true,
   },
-  inquire: {
+  name: {
+    type: Sequelize.STRING,
+  },
+  company_name: {
+    type: Sequelize.STRING,
+  },
+  email: {
+    type: Sequelize.STRING,
+  },
+  booking_date: {
+    type: Sequelize.DATEONLY,
+  },
+  num_of_people: {
+    type: Sequelize.INTEGER,
+  },
+  num_of_rooms: {
+    type: Sequelize.INTEGER,
+  },
+  description: {
     type: Sequelize.TEXT,
-    allowNull: false,
   },
   status: {
-    type: Sequelize.STRING,
-    allowNull: false,
+    type: Sequelize.BOOLEAN,
   },
 });
 

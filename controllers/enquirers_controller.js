@@ -1,6 +1,6 @@
 const Enquirers_To_Deal = require("../models/enquirers_to_deal_model");
 const ActivityLog = require("../models/activity_log_model");
-const {nanoid} = require("nanoid");
+const { nanoid } = require("nanoid");
 
 
 exports.getAllEnquirers = async (req, res) => {
@@ -16,7 +16,7 @@ exports.getAllEnquirers = async (req, res) => {
 
 exports.getEnquirer = async (req, res) => {
   try {
-    const enquirer = await Enquirers_To_Deal.findByPk(req.params.name);
+    const enquirer = await Enquirers_To_Deal.findByPk(req.params.id);
     if (!enquirer) {
       res.status(404).json({ success: false, message: "Enquirer not found" });
     } else {
@@ -31,7 +31,11 @@ exports.getEnquirer = async (req, res) => {
 
 exports.createEnquirer = async (req, res) => {
   try {
-    const enquirer = await Enquirers_To_Deal.create(req.body);
+    const data = {
+      id: nanoid(),
+      ...req.body,
+    }
+    const enquirer = await Enquirers_To_Deal.create(data);
 
     res.status(201).json({ success: true, data: enquirer });
   } catch (err) {
@@ -43,16 +47,18 @@ exports.createEnquirer = async (req, res) => {
 
 exports.updateEnquirer = async (req, res) => {
   try {
-    const enquirer = await Enquirers_To_Deal.findByPk(req.params.name);
+    const enquirer = await Enquirers_To_Deal.findByPk(req.params.id);
     if (!enquirer) {
       res.status(404).json({ success: false, message: "Enquirer not found" });
     } else {
-      const updatedEnquirer =  await enquirer.update(req.body);
+      const updatedEnquirer = await enquirer.update(req.body);
+
       const activityLog = await ActivityLog.create({
         log_id: nanoid(),
         manager_id: req.user.id,
         log: `Enquirer ${req.params.name} updated with data ${JSON.stringify(req.body)}`
       });
+
       res.json({ success: true, data: enquirer });
     }
   } catch (err) {
@@ -64,11 +70,12 @@ exports.updateEnquirer = async (req, res) => {
 
 exports.deleteEnquirer = async (req, res) => {
   try {
-    const enquirer = await Enquirers_To_Deal.findByPk(req.params.name);
+    const enquirer = await Enquirers_To_Deal.findByPk(req.params.id);
     if (!enquirer) {
       res.status(404).json({ success: false, message: "Enquirer not found" });
     } else {
       await enquirer.destroy();
+
       const activityLog = await ActivityLog.create({
         log_id: nanoid(),
         manager_id: req.user.id,

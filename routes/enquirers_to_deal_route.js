@@ -11,16 +11,16 @@ const {
 
 const {
     isAuthenticatedUser,
- } = require("../middleware/auth");
+} = require("../middleware/auth");
 
- enquirerRouter.get("/getAllEnquirers", isAuthenticatedUser,getAllEnquirers);
+enquirerRouter.get("/getAllEnquirers", isAuthenticatedUser, getAllEnquirers);
 
- enquirerRouter.get("/getEnquirer/:name", isAuthenticatedUser,getEnquirer);
+enquirerRouter.get("/getEnquirer/:id", isAuthenticatedUser, getEnquirer);
 
- enquirerRouter.post("/createEnquirer", isAuthenticatedUser,createEnquirer);
+enquirerRouter.post("/createEnquirer", isAuthenticatedUser, createEnquirer);
 
- enquirerRouter.put("/updateEnquirer/:name", isAuthenticatedUser,updateEnquirer);
+enquirerRouter.put("/updateEnquirer/:id", isAuthenticatedUser, updateEnquirer);
 
- enquirerRouter.delete("/deleteEnquirer/:name",isAuthenticatedUser, deleteEnquirer);
+enquirerRouter.delete("/deleteEnquirer/:id", isAuthenticatedUser, deleteEnquirer);
 
 module.exports = enquirerRouter;
